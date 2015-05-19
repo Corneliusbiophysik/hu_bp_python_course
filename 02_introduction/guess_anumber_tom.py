@@ -15,6 +15,10 @@ def main():
 					continue
 				elif entscheidung == 'n':
 					break
+				else:
+					print 'Gib bitte y oder n ein!'
+					n = 1
+					continue
 			except: 
 				print 'Gib bitte y oder n ein!'
 				n = 1
