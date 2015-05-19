@@ -5,8 +5,11 @@ def main():
 	n=5
 
 	while True:
+		n = n - 1
+		if n == 0:
+			print ('Du hast leider keinen Versuch mehr! Willst du nochmal Spielen?') 
 		try: 
-			geraten=int(raw_input('Du hast ' + n + ' Verusche.' 'Rate eine Zahl zwischen 1 und 100:'))
+			geraten=int(raw_input('Du hast noch ' + str(n) + ' Versuche. Rate eine Zahl zwischen 1 und 100:'))
 			if geraten < 1 or geraten > 99:
 				continue
 		except: 
