@@ -106,7 +106,7 @@ class MRNA(Polymer):
         NA_mass = {'A': 1.0, 'U': 2.2, 'G':2.1, 'C':1.3}
         mass=0.
         for i in NA_mass.keys():
-            mass = mass + NA_mass[i] * self.__sequence.count(NA_mass[i],0,len(self.__sequence))
+            mass = mass + NA_mass[i] * self.sequence.count(i,0,len(self.sequence))
         print mass
 
 
