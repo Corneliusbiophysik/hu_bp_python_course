@@ -101,12 +101,12 @@ class MRNA(Polymer):
         # 7. Create a list that stores if a ribosome is bound for each
         # codon (triplet).
         self.binding = [0 for i in range(len(sequence)/3)] # use this attribute for 7.
-
+   
     def calculate_mass(self):
         NA_mass = {'A': 1.0, 'U': 2.2, 'G':2.1, 'C':1.3}
         m=0.
         for i in NA_mass.keys():
-            m = m + NA_mass[i] * self.__sequence.count(NA_mass[i],0,len(self.__sequence))
+            m = m + NA_mass[i] * self.sequence.count(i,0,len(self.sequence))
         print m
 
 
