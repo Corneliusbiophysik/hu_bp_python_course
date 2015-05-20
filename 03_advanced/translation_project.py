@@ -11,9 +11,41 @@ class BioMolecule(object):
     @type mass: float
     """
     def __init__(self, id, name, mass=None):
-        self._id = id
+        #self._id = id
+        self.id = id
         self.name = name
         self.mass = mass
+
+    @property 
+    def name(self):
+        return self.__name
+
+    @name.setter
+    def name(self, value):
+        if not isinstance(value,str):
+            raise TypeError("name ist kein string")
+        self.__name = value
+
+    @property
+    def mass(self):
+        return self.__mass
+
+    @mass.setter
+    def mass(self, value):
+        if not isinstance(value, float):
+            raise TypeError("masse ist kein Float")
+        self.__mass = value
+
+    @property
+    def id(self):
+        return self.__id
+
+    @id.setter
+    def id(self,value):
+        if not isinstance(value, int):
+            raise TypeError("id ist kein Integer")
+        self.__id = value
+
 
     # 1. Write setter and getter methods for all attributes.
     #    Use @property decorators as dicussed in the lecture
@@ -31,7 +63,18 @@ class Polymer(BioMolecule):
     """
     def __init__(self, id, name, sequence, mass=None):
         # 3. Initialize the parent class correctly
-        self._sequence = sequence
+        super(Polymer, self).__init__(id,name,mass)
+        self.sequence = sequence
+
+    @property
+    def sequence(self):
+        return self.__sequence
+
+    @sequence.setter
+    def sequence(self,value):
+        if not isinstance(value,str):
+            raise TypeError("Sequenz ist kein String")
+        self.__sequence = value       
 
     
     # 4. Write getter and setter for sequence, again check for type
@@ -52,14 +95,22 @@ class Polymer(BioMolecule):
 
 class MRNA(Polymer):
     def __init__(self, id, name, sequence, mass=None):
+        super(MRNA, self).__init__(id,name,sequence,mass)
         # 6. Initialize the parent class correctly
 
         # 7. Create a list that stores if a ribosome is bound for each
         # codon (triplet).
-        self.binding = [] # use this attribute for 7.
+        self.binding = [0 for i in range(len(sequence)/3)] # use this attribute for 7.
 
     def calculate_mass(self):
         NA_mass = {'A': 1.0, 'U': 2.2, 'G':2.1, 'C':1.3}
+        mass=0.
+        for i in NA_mass.keys():
+            mass = mass + NA_mass[i] * self.__sequence.count(NA_mass[i],0,len(self.__sequence))
+        print mass
+
+
+         
         # 8. calculate the mass for the whole sequence
 
 class Protein(Polymer):
