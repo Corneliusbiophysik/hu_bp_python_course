@@ -86,6 +86,14 @@ class BioMoleculeCount(BioMolecule):
     def count(self, value):
         self.__count = value
 
+class  Metabolite(BioMoleculeCount):
+    def __init__(self, mid, name, count=0):
+        super(ATP, self).__init__(mid, name, count)
+        self.atp = a
+        self.aa= b
+        self.nt = c
+        
+
 
 class MRNA(Polymer):
     def __init__(self, mid, name, sequence, mass=0):
