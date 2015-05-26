@@ -76,6 +76,8 @@ class Translation(Process):
                 else:
                     model.states[prot.id] = [prot]
 
+        print self.__ribosomes
+
     def initiate(self, mrna):
         """
         Try to bind to a given MRNA. Binding probability corresponds to the ribosome count.
@@ -115,6 +117,7 @@ class Translation(Process):
                     mrna.binding[i] = 0
         return 0
 
+
     def terminate(self, mrna, i):
         """
         Splits the ribosome/MRNA complex and returns a protein.
@@ -128,6 +131,7 @@ class Translation(Process):
         return protein
 
 
+
 class Transcription(Process):
     """
     Implements mRNA transcription from genes on the chromosome.
@@ -137,3 +141,32 @@ class Transcription(Process):
         super(Transcription, self).__init__(id, name)
 
     # TODO: implement transcription
+
+class Degradation(Process):
+    """
+    Implements Protein Degradation by chance
+    """
+
+    def __init__(self, id, name):
+        super(Degradation, self).__init__(id, name)
+
+    def set_states(self, protein_ids, degradation_rates):
+        self.protein_ids = protein_ids
+        self.degradation_rates = degradation_rates
+
+    #self.__proteasom = []
+    def update(self, model):
+        #self.__proteasom = model.states[self.enzyme_ids[0]]
+        #if "Protein_1" in model.states:
+            #print "self.states[Protein_1]: ", model.states["Protein_1"]
+        #print self.protein_ids
+        for protein_id in self.protein_ids:
+            print "len befor: ", len(model.states[protein_id])
+            if len(model.states[protein_id]) != 0:
+                print "len after: ", len(model.states[protein_id])
+                #model.states[protein_id][0].name
+                y = random.randint(0,100)
+                #print self.protein_ids
+                if y <= 1:
+                    print "model.states[protein_id]" , model.states[protein_id]
+                    del model.states[protein_id][0]
