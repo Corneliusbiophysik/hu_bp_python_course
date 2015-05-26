@@ -15,6 +15,7 @@ class Model(object):
         self.mrnas = {'MRNA_{0}'.format(i): mol.MRNA(i, 'MRNA_{0}'.format(i), "UUUUUUUUUUAA") for i in xrange(50)}
         self.states.update(self.ribosomes)
         self.states.update(self.mrnas)
+        #self.states.update({'MRNA_50': mol.MRNA(50, 'MRNA_50', "UUUGGCCUUUUUAA")})
 
         # initiate processes
         translation = proc.Translation(1, "Translation")

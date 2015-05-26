@@ -1,4 +1,5 @@
 import molecules
+import numpy as np
 
 class Logger(object):
 
@@ -10,24 +11,49 @@ class Logger(object):
         self.__temp_data.append(dict(x))
 
     def output(self):
-        element = {'mass': None,
-                   'sequence': None,
-                   'timecourse': None}
+
+        def get_count(x):
+            if isinstance(x,list):
+                return len(x)
+            else:
+                try:
+                    return x.count
+                except:
+                    return None
+
+        def set_attributes(element,x,t):
+            try:
+                element['mass']=x.mass
+            except: 
+                element['mass']=None
+            try:
+                element['sequence']=x.sequence
+            except: 
+                element['sequence']=None
+            try:
+                element['timecourse'][t]=get_count(x)
+            except:
+                element['timecourse'][t]=None
+
+
+        set_of_keys=self.__temp_data[99].keys()
+
+
+        temp = {'mass': None,
+                'sequence': None,
+                'timecourse': np.zeros(100)}
+
         result = {}
-        #print self.__temp_data
-        for y in self.__temp_data[99].keys():
-            temp = element.copy()
-            #print y
-            try:
-                temp['mass']=self.__temp_data[99][y].mass
-            except: 
-                temp['mass']=None
-            try:
-                temp['sequence']=self.__temp_data[99][y].sequence
-            except: 
-                temp['sequence']=None
+        for i in set_of_keys:
+            #print i
+            result[i]=temp.copy()
         
-            result[y]=temp
+        #print self.__temp_data
+        for t in xrange(100):
+            for y in set_of_keys :
+                set_attributes(result[y],self.__temp_data[99][y],99)
+                #result[y]=element       
+            
             #     #continue
             #     #prufen, ob Objekt Eigenschaft masse besitzt.
             #     #dann mass=masse von Objekt
