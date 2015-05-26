@@ -169,3 +169,6 @@ class RNAPolymeraseII(Polymerase):
     """
     # TODO: implement RNAPolymeraseII
     pass
+
+class Proteasom(BioMoleculeCount):
+    pass
