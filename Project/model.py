@@ -21,6 +21,8 @@ class Model(object):
         translation.set_states(self.mrnas.keys(), self.ribosomes.keys())
         self.processes = {"Translation":translation}
 
+        self.logger=loggy.Logger()
+
     def step(self):
         """
         Do one update step for each process.
@@ -34,16 +36,20 @@ class Model(object):
         Simulate the model for some time.
 
         """
-        logger=loggy.Logger()
 
         for s in xrange(steps):
             self.step()
             if log: # This could be an entry point for further logging
                 # print count of each protein to the screen
                 #print '\r{}'.format([len(self.states[x]) for x in self.states.keys() if "Protein_" in x]),
-                #print [self.states[x][0].mass  for x in self.states.keys() if "Protein_" in x]
-                print self.states['Ribosomes'].count
-                logger + (self.states.items())
+                #print [self.states[x][0].mass  for x in self.states.keys() if "Protein_" in x]w
+                self.logger.add_step(self.states.items())
+
+    def output(self):        
+        return self.logger.output() 
+
 if __name__ == "__main__":
     c = Model()
     c.simulate(100, log=True)
+    print c.output()
+
