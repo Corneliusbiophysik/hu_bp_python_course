@@ -1,5 +1,6 @@
 import processes as proc
 import molecules as mol
+import numpy as np
 
 class Model(object):
     """
@@ -18,7 +19,9 @@ class Model(object):
         # initiate processes
         translation = proc.Translation(1, "Translation")
         translation.set_states(self.mrnas.keys(), self.ribosomes.keys())
-        self.processes = {"Translation":translation}
+        self.degradation = proc.Degradation(2, "Degradation")
+        self.processes = {"Translation":translation, "Degradation":self.degradation}
+
 
     def step(self):
         """
@@ -28,17 +31,35 @@ class Model(object):
         for p in self.processes:
             self.processes[p].update(self)
 
+            protein = []
+            g = 0
+            for x in self.states.keys():
+                if "Protein_" in x:
+                    protein.append(x)
+                    g += len(self.states[x])
+            self.degradation.set_states( protein, np.ones(len(protein)) )
+            self.degradation.update(self)
+            #print 'protein', protein
+            #print 'g',g
+            #print 'self.states', self.states.keys()
+            g = 0
+
     def simulate(self, steps, log=True):
         """
         Simulate the model for some time.
 
         """
+        
         for s in xrange(steps):
             self.step()
             if log: # This could be an entry point for further logging
                 # print count of each protein to the screen
-                print '\r{}'.format([len(self.states[x]) for x in self.states.keys() if "Protein_" in x]),
+                #print '\r{}'.format([len(self.states[x]) for x in self.states.keys() if "Protein_" in x]),
+                pass
+                
+
             
 if __name__ == "__main__":
     c = Model()
     c.simulate(100, log=True)
+
