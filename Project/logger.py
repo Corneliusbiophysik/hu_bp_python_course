@@ -1,6 +1,7 @@
 import molecules
 import numpy as np
 
+import copy
 class Logger(object):
 
     def __init__(self):
@@ -21,47 +22,58 @@ class Logger(object):
         def init_result():
             temp = {'mass': None,
                     'sequence': None,
-                    'timecourse': np.zeros(100)}
+                    'timecourse': range(100)}#np.zeros(100)}
 
             for i in set_of_keys:
-                result[i]=temp.copy()
+                result[i]=copy.deepcopy(temp)
         
 
 
         def get_count(x):
             if isinstance(x,list):
                 return len(x)
-            else:
-                try:
-                    return x.count
-                except:
-                    return None
+
+            return 0
+            # else:
+            #     try:
+            #         return x.count
+            #     except:
+            #         return None
 
         def set_attributes(i,x,t):
-            if i in x:
-                element=result[i]
+            if i in x[t]:
+                #pass
+                #print i#,result[i]['timecourse']   
+                #print i 
+                #print t, len(x[t])          
+                result[i]['timecourse'][t]=''+ i
                 try:
-                    element['mass']=x[i].mass
+                    result[i]['mass']=x[t][i].mass
                 except: 
-                    element['mass']=None
+                    result[i]['mass']=None
                 try:
-                    element['sequence']=x[i].sequence
+                    result[i]['sequence']=x[t][i].sequence
                 except: 
-                    element['sequence']=None
-                try:
-                    element['timecourse'][t]=get_count(x)
-                except:
-                    element['timecourse'][t]=None
+                    result[i]['sequence']=None
+
+   
+ 
 
               
         set_of_keys=set()        
-        get_keys()    # alle States einsammel
+        get_keys()    # alle State keys einsammeln
         result = {} 
         init_result() # Ausgabe vorbereiten
-
-        for t in xrange(100):
+        #print result
+        #print self.__temp_data[0],len(self.__temp_data[0])
+        for t in xrange(10):
             for i in set_of_keys:
-                set_attributes(i,self.__temp_data[t],t)
+            #for t in xrange(100):
+                #print i
+                set_attributes(i,self.__temp_data,t)
+
+        print result
+        #print result['MRNA3']
 
 
 
@@ -86,7 +98,7 @@ class Logger(object):
         #     for y in set_of_keys :
         #         set_attributes(result[y],self.__temp_data[99][y],99)
 
-        return result
+        return None#result
 
 
 
