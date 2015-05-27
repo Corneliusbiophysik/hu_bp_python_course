@@ -12,18 +12,13 @@ class Logger(object):
 
     def output(self):
 
-        result = {}       
-        set_of_keys=set()
-
-
-
         def get_keys():
             for i in self.__temp_data:
                 #sprint i.keys()
                 for key in i.keys():
                     set_of_keys.add(key)
 
-        def init_output():
+        def init_result():
             temp = {'mass': None,
                     'sequence': None,
                     'timecourse': np.zeros(100)}
@@ -42,23 +37,40 @@ class Logger(object):
                 except:
                     return None
 
-        def set_attributes(element,x,t):
-            try:
-                element['mass']=x.mass
-            except: 
-                element['mass']=None
-            try:
-                element['sequence']=x.sequence
-            except: 
-                element['sequence']=None
-            try:
-                element['timecourse'][t]=get_count(x)
-            except:
-                element['timecourse'][t]=None
+        def set_attributes(i,x,t):
+            if i in x:
+                element=result[i]
+                try:
+                    element['mass']=x[i].mass
+                except: 
+                    element['mass']=None
+                try:
+                    element['sequence']=x[i].sequence
+                except: 
+                    element['sequence']=None
+                try:
+                    element['timecourse'][t]=get_count(x)
+                except:
+                    element['timecourse'][t]=None
+
+              
+        set_of_keys=set()        
+        get_keys()    # alle States einsammel
+        result = {} 
+        init_result() # Ausgabe vorbereiten
+
+        for t in xrange(100):
+            for i in set_of_keys:
+                set_attributes(i,self.__temp_data[t],t)
 
 
-        init_output() # Ausgabe vorbereiten
-        get_keys()
+
+
+
+
+
+
+
         #print set_of_keys
 
 
