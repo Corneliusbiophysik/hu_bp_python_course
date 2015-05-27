@@ -43,7 +43,6 @@ class Model(object):
             if log: # This could be an entry point for further logging
                 # print count of each protein to the screen
                 #print '\r{}'.format([len(self.states[x]) for x in self.states.keys() if "Protein_" in x]),
-                #print [self.states[x][0].mass  for x in self.states.keys() if "Protein_" in x]w
                 self.logger.add_step(self.states.items())
 
     def output(self):        

@@ -1,6 +1,7 @@
-import molecules
+import molecules as mol
 import numpy as np
 import copy
+import pickle
 class Logger(object):
 
     def __init__(self):
@@ -14,40 +15,31 @@ class Logger(object):
 
         def get_keys():
             for i in self.__temp_data:
-                #sprint i.keys()
                 for key in i.keys():
                     set_of_keys.add(key)
 
         def init_result():
             temp = {'mass': None,
                     'sequence': None,
-                    'timecourse': range(100)}#np.zeros(100)}
+                    'timecourse': np.zeros(N)}
 
             for i in set_of_keys:
                 result[i]=copy.deepcopy(temp)
         
 
 
-        def get_count(x):
+        def get_value(x):
             if isinstance(x,list):
                 return len(x)
-            return 0
-            # else:
-            #     try:
-            #         return x.count
-            #     except:
-            #         return None
+            if isinstance(x,mol.MRNA):
+                if x.binding != [0]*(len(x.sequence)/3):
+                    return 1
+            if isinstance(x,mol.Ribosome):
+                return x.count
 
         def set_attributes(i,x,t):
-            if i in x:
-                #pass
-                #print i#,result[i]['timecourse']   
-                #print i 
-                #print t, len(x[t])   
-                try:     
-                    result[i]['timecourse'][t]=len(x[i])
-                except:
-                    result[i]['timecourse'] = None
+            if i in x:                
+                result[i]['timecourse'][t]=get_value(x[i])#len(x[i])
                 try:
                     result[i]['mass']=x[i].mass
                 except: 
@@ -60,46 +52,19 @@ class Logger(object):
    
  
 
-              
+        N = len(self.__temp_data)     
         set_of_keys=set()        
         get_keys()    # alle State keys einsammeln
         result = {} 
         init_result() # Ausgabe vorbereiten
-        #print result
-        #print self.__temp_data[0],len(self.__temp_data[0])
-        for t in xrange(100):
+
+        for t in xrange(N):
             for i in set_of_keys:
-            #for t in xrange(100):
-                #print i
                 set_attributes(i,self.__temp_data[t],t)
 
-        print result
-        #print result['MRNA3']
-
-
-
-
-
-
-
-
-
-        #print set_of_keys
-
-
-
-
-
-
-
-
-        
-        #print self.__temp_data
-        # for t in xrange(100):
-        #     for y in set_of_keys :
-        #         set_attributes(result[y],self.__temp_data[99][y],99)
-
-        return None#result
+        with open('output.p','wb') as f:
+            pickle.dump(result,f)
+        return result
 
 
 
