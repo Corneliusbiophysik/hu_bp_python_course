@@ -56,7 +56,7 @@ class Translation(Process):
         super(Translation, self).__init__(id, name)
 
         # declare attributes
-        self.__ribsomes = []
+        self.__ribosomes = []
 
     def update(self, model):
         """
@@ -151,33 +151,61 @@ class Degradation(Process):
 
     def __init__(self, id, name):
         super(Degradation, self).__init__(id, name)
+        self.__proteasomes = []
 
-    def set_states(self, protein_ids, degradation_rates):
-        self.protein_ids = protein_ids
-        self.degradation_rates = degradation_rates
+    def set_states(self, substrate_ids, enzyme_ids):
+        self.protein_ids = substrate_ids
+        self.enzyme_ids = enzyme_ids
 
-    #self.__proteasom = []
+    
     def update(self, model):
         global count_s
+        self.__proteasomes = model.states[self.enzyme_ids[0]]
+        self.__proteasomes.count = 10
         count_s += 1
         print 'count_s', count_s
         #self.__proteasom = model.states[self.enzyme_ids[0]]
         #if "Protein_1" in model.states:
             #print "self.states[Protein_1]: ", model.states["Protein_1"]
         #print self.protein_ids
-        for protein_id in self.protein_ids:
-            print "len befor: ", len(model.states[protein_id])
-            if len(model.states[protein_id]) != 0:
-                print "len after: ", len(model.states[protein_id])
+        #for protein_id in self.protein_ids:
+            #print "len befor: ", len(model.states[protein_id])
+            #if len(model.states[protein_id]) != 0:
+                #print "len after: ", len(model.states[protein_id])
                 #model.states[protein_id][0].name
                 #print self.protein_ids
-                if count_s%5 == 0:
-                    y = random.randint(0,1)
-                    if y == 1:
-                        print 'Protein killed'
+                #if count_s%model.states[protein_id][0].halflife == 0:
+                    #y = random.randint(0,1)
+                    #if y == 1:
+                        #print 'Protein killed'
                         #print "model.states[protein_id]" , model.states[protein_id]
-                        del model.states[protein_id][0]
+                        #del model.states[protein_id][0]
+                    #else:
+                        #print 'Nothing happens'
+        #if count_s%model.states[protein_id][0].halflife != 0:
+         #   print 'Halflife not reached'
+
+        for p in self.protein_ids:
+            if len(model.states[p]) != 0:
+                hwz = model.states[p][0].halflife
+                sig = float(1.0/(2.0*hwz))
+                for pos in model.states[p]:
+                    if self.__proteasomes.count != 0:
+                        z = random.uniform(0,1)
+                        print z
+                        print sig
+                        if z < sig:
+                            print 'Protein killed'
+                            #count_s = 0
+                            self.__proteasomes.count -= 1
+                            print 'Anzahl:', self.__proteasomes.count
+                            del model.states[p][0]
+                            #count_s += 1
+                        else:
+                            print 'Nothing happens'
                     else:
-                        print 'Nothing happens'
-                else:
-                    print 'count_s', count_s
+                        print 'No Proteasome'
+
+        #print 'count', count_s
+        #count_s = 0
+        #print 'Proteasomes:', self.__proteasomes

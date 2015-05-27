@@ -13,14 +13,16 @@ class Model(object):
         # initiate states
         self.ribosomes = {'Ribosomes': mol.Ribosome('Ribosomes', 'Ribosomes', 10)}
         self.mrnas = {'MRNA_{0}'.format(i): mol.MRNA(i, 'MRNA_{0}'.format(i), "UUUUUUUUUUAA") for i in xrange(50)}
+        self.proteasomes = {'Proteasomes': mol.Proteasome('Proteasomes', 'Proteasomes', 10)}
         self.states.update(self.ribosomes)
         self.states.update(self.mrnas)
+        self.states.update(self.proteasomes)
 
         # initiate processes
         translation = proc.Translation(1, "Translation")
         translation.set_states(self.mrnas.keys(), self.ribosomes.keys())
         self.degradation = proc.Degradation(2, "Degradation")
-        self.processes = {"Translation":translation}  #, "Degradation":self.degradation}
+        self.processes = {"Translation":translation}
 
 
     def step(self):
@@ -37,12 +39,13 @@ class Model(object):
                 if "Protein_" in x:
                     protein.append(x)
                     g += len(self.states[x])
-            self.degradation.set_states(protein, np.ones(len(protein)) )
+            self.degradation.set_states(protein, self.proteasomes.keys() )
             self.degradation.update(self)
             #print 'protein', protein
             #print 'g',g
             #print 'self.states', self.states.keys()
             g = 0
+
 
 
     def simulate(self, steps, log=True):
@@ -64,4 +67,5 @@ class Model(object):
 if __name__ == "__main__":
     c = Model()
     c.simulate(100, log=True)
+
 
