@@ -146,6 +146,8 @@ class Degradation(Process):
     """
     Implements Protein Degradation by chance
     """
+    count_s = 0
+    global count_s
 
     def __init__(self, id, name):
         super(Degradation, self).__init__(id, name)
@@ -156,6 +158,9 @@ class Degradation(Process):
 
     #self.__proteasom = []
     def update(self, model):
+        global count_s
+        count_s += 1
+        print 'count_s', count_s
         #self.__proteasom = model.states[self.enzyme_ids[0]]
         #if "Protein_1" in model.states:
             #print "self.states[Protein_1]: ", model.states["Protein_1"]
@@ -165,8 +170,14 @@ class Degradation(Process):
             if len(model.states[protein_id]) != 0:
                 print "len after: ", len(model.states[protein_id])
                 #model.states[protein_id][0].name
-                y = random.randint(0,100)
                 #print self.protein_ids
-                if y <= 1:
-                    print "model.states[protein_id]" , model.states[protein_id]
-                    del model.states[protein_id][0]
+                if count_s%5 == 0:
+                    y = random.randint(0,1)
+                    if y == 1:
+                        print 'Protein killed'
+                        #print "model.states[protein_id]" , model.states[protein_id]
+                        del model.states[protein_id][0]
+                    else:
+                        print 'Nothing happens'
+                else:
+                    print 'count_s', count_s
