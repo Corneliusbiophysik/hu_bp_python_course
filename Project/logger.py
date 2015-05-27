@@ -28,26 +28,26 @@ class Logger(object):
         
 
 
-        def get_value(x):
-            if isinstance(x,list):
-                return len(x)
-            if isinstance(x,mol.MRNA):
-                if x.binding != [0]*(len(x.sequence)/3):
+        def get_value(state):               # Gebe einen sinnvollen Wert aus, der sich nach der Art des Biomolekuels richtet
+            if isinstance(state,list):
+                return len(state)
+            if isinstance(state,mol.MRNA):
+                if state.binding != [0]*(len(state.sequence)/3):
                     return 1
-            if isinstance(x,mol.Ribosome):
-                return x.count
+            if isinstance(state,mol.Ribosome):
+                return state.count
 
-        def set_attributes(i,x,t):
-            if i in x:                
-                result[i]['timecourse'][t]=get_value(x[i])#len(x[i])
+        def set_attributes(key_of_state,states_at_timepoint,t):
+            if key_of_state in states_at_timepoint:                
+                result[key_of_state]['timecourse'][t]=get_value(states_at_timepoint[key_of_state])#len(states_at_timepoint[i])
                 try:
-                    result[i]['mass']=x[i].mass
+                    result[key_of_state]['mass']=states_at_timepoint[key_of_state].mass
                 except: 
-                    result[i]['mass']=None
+                    result[key_of_state]['mass']=None
                 try:
-                    result[i]['sequence']=x[i].sequence
+                    result[key_of_state]['sequence']=states_at_timepoint[key_of_state].sequence
                 except: 
-                    result[i]['sequence']=None
+                    result[key_of_state]['sequence']=None
 
    
  
