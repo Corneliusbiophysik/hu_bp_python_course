@@ -1,6 +1,5 @@
 import molecules
 import numpy as np
-
 import copy
 class Logger(object):
 
@@ -9,7 +8,7 @@ class Logger(object):
 
 
     def add_step(self,x):
-        self.__temp_data.append(dict(x))
+        self.__temp_data.append(dict(copy.deepcopy(x)))
 
     def output(self):
 
@@ -32,7 +31,6 @@ class Logger(object):
         def get_count(x):
             if isinstance(x,list):
                 return len(x)
-
             return 0
             # else:
             #     try:
@@ -41,18 +39,21 @@ class Logger(object):
             #         return None
 
         def set_attributes(i,x,t):
-            if i in x[t]:
+            if i in x:
                 #pass
                 #print i#,result[i]['timecourse']   
                 #print i 
-                #print t, len(x[t])          
-                result[i]['timecourse'][t]=''+ i
+                #print t, len(x[t])   
+                try:     
+                    result[i]['timecourse'][t]=len(x[i])
+                except:
+                    result[i]['timecourse'] = None
                 try:
-                    result[i]['mass']=x[t][i].mass
+                    result[i]['mass']=x[i].mass
                 except: 
                     result[i]['mass']=None
                 try:
-                    result[i]['sequence']=x[t][i].sequence
+                    result[i]['sequence']=x[i].sequence
                 except: 
                     result[i]['sequence']=None
 
@@ -66,11 +67,11 @@ class Logger(object):
         init_result() # Ausgabe vorbereiten
         #print result
         #print self.__temp_data[0],len(self.__temp_data[0])
-        for t in xrange(10):
+        for t in xrange(100):
             for i in set_of_keys:
             #for t in xrange(100):
                 #print i
-                set_attributes(i,self.__temp_data,t)
+                set_attributes(i,self.__temp_data[t],t)
 
         print result
         #print result['MRNA3']
