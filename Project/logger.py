@@ -12,6 +12,27 @@ class Logger(object):
 
     def output(self):
 
+        result = {}       
+        set_of_keys=set()
+
+
+
+        def get_keys():
+            for i in self.__temp_data:
+                #sprint i.keys()
+                for key in i.keys():
+                    set_of_keys.add(key)
+
+        def init_output():
+            temp = {'mass': None,
+                    'sequence': None,
+                    'timecourse': np.zeros(100)}
+
+            for i in set_of_keys:
+                result[i]=temp.copy()
+        
+
+
         def get_count(x):
             if isinstance(x,list):
                 return len(x)
@@ -36,28 +57,23 @@ class Logger(object):
                 element['timecourse'][t]=None
 
 
-        set_of_keys=self.__temp_data[99].keys()
+        init_output() # Ausgabe vorbereiten
+        get_keys()
+        #print set_of_keys
 
 
-        temp = {'mass': None,
-                'sequence': None,
-                'timecourse': np.zeros(100)}
 
-        result = {}
-        for i in set_of_keys:
-            #print i
-            result[i]=temp.copy()
+
+
+
+
+
         
         #print self.__temp_data
-        for t in xrange(100):
-            for y in set_of_keys :
-                set_attributes(result[y],self.__temp_data[99][y],99)
-                #result[y]=element       
-            
-            #     #continue
-            #     #prufen, ob Objekt Eigenschaft masse besitzt.
-            #     #dann mass=masse von Objekt
-            #     #ansonsten continue 
+        # for t in xrange(100):
+        #     for y in set_of_keys :
+        #         set_attributes(result[y],self.__temp_data[99][y],99)
+
         return result
 
 
