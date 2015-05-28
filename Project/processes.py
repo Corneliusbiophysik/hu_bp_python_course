@@ -178,7 +178,7 @@ class Degradation(Process):
         for p in self.protein_ids:
             if len(model.states[p]) != 0:
                 hwz = model.states[p][0].halflife
-                sig = float(1.0/(2.0*hwz))
+                sig = float(1.0/(2.0*hwz*60))
                 for pos in model.states[p]:
                     if self.__proteasomes.count != 0:
                         z = random.uniform(0,1)
@@ -193,7 +193,7 @@ class Degradation(Process):
                             print 'Nothing happens'
                     else:
                         z = random.uniform(0,1)
-                        sig = float(1.0/(4.0*hwz))
+                        sig = float(1.0/(4.0*hwz*60))
                         print z
                         print sig
                         if z < sig:
@@ -201,4 +201,3 @@ class Degradation(Process):
                             del model.states[p][0]
                         else:
                             print 'Nothing happens without Proteasome'
-
