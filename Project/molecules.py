@@ -16,6 +16,7 @@ class BioMolecule(object):
         self.__mid = mid
         self.name = name
         self.mass = mass
+       
 
     @property
     def id(self):
@@ -87,6 +88,18 @@ class BioMoleculeCount(BioMolecule):
     @count.setter
     def count(self, value):
         self.__count = value
+
+class Metabolite(BioMoleculeCount): 
+    """ 
+    A global class attribute counts the number of metabolites that have 
+    been instantiated. A function eliminates used metabolites.
+
+    """
+    def __init__(self, mid, name, count):
+        super(Metabolite, self).__init__(mid, name, count)
+    
+    def metacount(self, magnitude):
+        self.count -= magnitude
 
 
 class MRNA(Polymer):

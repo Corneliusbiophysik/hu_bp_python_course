@@ -2,6 +2,9 @@ import processes as proc
 import molecules as mol
 import logger as loggy
 
+import replication as repl
+import random
+
 class Model(object):
     """
     Initializes the states and processes for the model and lets the processes update their corresponding states.
@@ -9,34 +12,44 @@ class Model(object):
     def __init__(self):
         self.states = {}
         self.processes = {}
+
         kb = know()
         genes = ['MG_001', 'MG_002', 'MG_003', 'MG_004', 'MG_005']
-        print genes
+
 
         # initiate states
         self.ribosomes = {'Ribosomes': mol.Ribosome('Ribosomes', 'Ribosomes', 10)}
         self.mrnas = {'MRNA_{0}'.format(i): mol.MRNA(i, 'MRNA_{0}'.format(i), "UUUUUUUUUUAA") for i in genes}
         self.proteasomes = {'Proteasomes': mol.Proteasome('Proteasomes', 'Proteasomes', 10)}
+        self.metabolites = {'ATP': mol.Metabolite(0, 'ATP', 6000.0), 'AA': mol.Metabolite(1, 'AA', 4000.0), 'NT': mol.Metabolite(2, 'NT', 2000.0)}#anpassen an
         self.states.update(self.ribosomes)
         self.states.update(self.mrnas)
-        #self.states.update({'MRNA_50': mol.MRNA(50, 'MRNA_50', "UUUGGCCUUUUUAA")})
+        self.states.update(self.metabolites)
+        
 
         # initiate processes
         translation = proc.Translation(1, "Translation")
         translation.set_states(self.mrnas.keys(), self.ribosomes.keys())
-        self.degradation = proc.Degradation(2, "Degradation")
-        self.processes = {"Translation":translation}
+        degradation = proc.Degradation(2, "Degradation")
+        replication = repl.Replication(2, "Replication")
+        replication.set_states(self.mrnas.keys() + self.metabolites.keys(), self.ribosomes.keys() )
+        self.processes = {"Translation":translation,
+                       "Replication":replication,
+                       "Degradation":degradation}
 
         self.logger=loggy.Logger()  # create the logger object
 
     def step(self):
+
+        
         """
         Do one update step for each process.
 
         """
-        for p in self.processes:
+        keys = self.processes.keys()
+        random.shuffle(keys)
+        for p in keys:
             self.processes[p].update(self)
-
             protein = []
             g = 0
             for x in self.states.keys():
