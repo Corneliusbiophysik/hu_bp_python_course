@@ -1,2 +1,0 @@
-from Input import KnowledgeBase
-a= KnowledgeBase.KnowledgeBase()
