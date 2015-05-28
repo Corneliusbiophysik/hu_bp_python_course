@@ -87,34 +87,17 @@ class BioMoleculeCount(BioMolecule):
     def count(self, value):
         self.__count = value
 
-class Metabolite(BioMoleculeCount):
-    def __init__(self, mid, name, count):  # my_dict
+class Metabolite(BioMoleculeCount): 
+    """ 
+    A global class attribute counts the number of metabolites that have 
+    been instantiated. A function eliminates used metabolites.
+
+    """
+    def __init__(self, mid, name, count):
         super(Metabolite, self).__init__(mid, name, count)
-        #self.my_dict = my_dict
-        #self.atp = my_dict["ATP"]
-        #self.atp = my_dict[0]
-
-    #def __getitem__(self, value):
-    #    return self.atp[value]
-
-    #def __setitem__(self, key, value):
-    #    self.atp[key]=value
     
-    def atpcount(self):
+    def metacount(self):
         self.count -= 1
-        #return self._atp
-        
-        #property
-        #get
-
-        #print "count: ", count
-
-   # def metabol(self):
-        
-   #     self.count=self.my_dict['ATP']
-   #     print(self.count)
-
-
 
 
 class MRNA(Polymer):

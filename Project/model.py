@@ -8,21 +8,16 @@ class Model(object):
     def __init__(self):
         self.states = {}
         self.processes = {}
-        #self.my_dict = {'ATP':15}
+        #initialisieren der Tabelle
 
         # initiate states
         self.ribosomes = {'Ribosomes': mol.Ribosome('Ribosomes', 'Ribosomes', 10)}
         self.mrnas = {'MRNA_{0}'.format(i): mol.MRNA(i, 'MRNA_{0}'.format(i), "UUUUUUUUUUAA") for i in xrange(50)}
-        self.metabolites = {'ATP': mol.Metabolite(0, 'ATP', 50.0)}
-        #self.atp = {'ATP': mol.Metabolite(0, 'ATP', 5)}
-        #self.metabolites = mol.Metabolite(self.my_dict)
-        #print self.metabolites.atp
-        #print self.atp['ATP'].name
-        #print self.atp['ATP'].count
+        self.metabolites = {'ATP': mol.Metabolite(0, 'ATP', 500.0)}#anpassen an Tabelle
+        
 
         self.states.update(self.ribosomes)
         self.states.update(self.mrnas)
-        #self.states.update(self.metabolites.atp)
         self.states.update(self.metabolites)
 
         # initiate processes
@@ -52,7 +47,3 @@ class Model(object):
 if __name__ == "__main__":
     c = Model()
     c.simulate(100, log=True)
-    #d = mol.Metabolite(0, 'ATP', 1)
-    #d.metabol()
-    #e = proc.Translation(0, 'ATP')
-    #e.update()
