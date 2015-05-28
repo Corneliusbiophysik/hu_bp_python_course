@@ -83,8 +83,6 @@ class Translation(Process):
                 else:
                     model.states[prot.id] = [prot]
 
-        print self.__ribosomes
-
     def initiate(self, mrna):
         """
         Try to bind to a given MRNA. Binding probability corresponds to the ribosome count.
@@ -191,7 +189,6 @@ class Degradation(Process):
         self.__proteasomes = model.states[self.enzyme_ids[0]]
         self.__proteasomes.count = 10
         count_s += 1
-        print 'count_s', count_s
 
         #Checks if there are any proteins available, computes a value sigma (depending on halflife) which is compared
         # to random number between 0 and 1. If random number is < than sigma, protein is degradated and one proteasom is busy.
@@ -203,22 +200,11 @@ class Degradation(Process):
                 for pos in model.states[p]:
                     if self.__proteasomes.count != 0:
                         z = random.uniform(0,1)
-                        print z
-                        print sig
                         if z < sig:
-                            print 'Protein killed'
                             self.__proteasomes.count -= 1
-                            print 'Anzahl:', self.__proteasomes.count
                             del model.states[p][0]
-                        else:
-                            print 'Nothing happens'
                     else:
                         z = random.uniform(0,1)
                         sig = float(1.0/(4.0*hwz*60))
-                        print z
-                        print sig
                         if z < sig:
-                            print 'Protein killed without Proteasome'
                             del model.states[p][0]
-                        else:
-                            print 'Nothing happens without Proteasome'

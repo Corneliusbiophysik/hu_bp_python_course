@@ -96,5 +96,5 @@ class Model(object):
 if __name__ == "__main__":
     c = Model()
     c.simulate(100, log=True)
-    print c.output() # print the output data type of the Logger. Can be used for Plotting!!!
+    #rint c.output() # print the output data type of the Logger. Can be used for Plotting!!!
 
