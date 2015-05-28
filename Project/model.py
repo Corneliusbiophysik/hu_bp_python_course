@@ -22,7 +22,7 @@ class Model(object):
         translation.set_states(self.mrnas.keys(), self.ribosomes.keys())
         self.processes = {"Translation":translation}
 
-        self.logger=loggy.Logger()
+        self.logger=loggy.Logger()  # create the logger object
 
     def step(self):
         """
@@ -43,13 +43,13 @@ class Model(object):
             if log: # This could be an entry point for further logging
                 # print count of each protein to the screen
                 #print '\r{}'.format([len(self.states[x]) for x in self.states.keys() if "Protein_" in x]),
-                self.logger.add_step(self.states.items())
+                self.logger.add_step(self.states.items()) # store the states of a timestep to the Logger object 
 
-    def output(self):        
+    def output(self): # wrapper: create the output data type after a simulation was done.  
         return self.logger.output() 
 
 if __name__ == "__main__":
     c = Model()
     c.simulate(100, log=True)
-    print c.output()
+    print c.output() # print the output data type of the Logger. Can be used for Plotting!!!
 
