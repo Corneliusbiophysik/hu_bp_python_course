@@ -57,7 +57,7 @@ class KnowledgeBase(object):
 				f.write(data)
 
 		#Schreiben in die Datenbank
-		con = lite.connect('./database/knowledgebase.db')
+		con = lite.connect('./Input/database/knowledgebase.db')
 		con.text_factory = str
 
 
@@ -73,7 +73,7 @@ class KnowledgeBase(object):
 				cur.execute("DROP TABLE IF EXISTS "+j )
 				wert=helper[j].to_sql(j,con)
 				data = '\n'.join(con.iterdump())
-				writeData(data, "./database/export/"+j)
+				writeData(data, "./Input/database/export/"+j)
 
 		with con:
 			cur = con.cursor()
@@ -81,7 +81,7 @@ class KnowledgeBase(object):
 			cur.execute("CREATE TABLE genome(Sequence TEXT)")
 			cur.execute("INSERT INTO genome VALUES('"+genome+"')")
 			data = '\n'.join(con.iterdump())
-			writeData(data, "./database/export/genome")
+			writeData(data, "./Input/database/export/genome")
 		return None
 
 
@@ -102,7 +102,7 @@ class KnowledgeBase(object):
 		helplist1 = ['genes', 'protein_hl','metabolites','conc', 'genome','stopcodon']
 		if namestring not in helplist1:
 			raise ValueError('Wanted Table not in database')
-		con = lite.connect('./database/knowledgebase.db')
+		con = lite.connect('./Input/database/knowledgebase.db')
 		with con:
 			j=namestring
 			cur = con.cursor()    
@@ -143,13 +143,13 @@ class KnowledgeBase(object):
 		@param dframe: dataframe with the data
 		@type dframe: dataframe
 		"""
-		con = lite.connect('./database/knowledgebase.db')
+		con = lite.connect('./Input/database/knowledgebase.db')
 		con.text_factory = str
 		cur = con.cursor()
 		cur.execute("DROP TABLE IF EXISTS "+name )
 		dframe.to_sql(name,con)
 		data = '\n'.join(con.iterdump())
-		writeData(data, "./database/export/"+name)
+		writeData(data, "./Input/database/export/"+name)
 	
 
 
@@ -160,7 +160,7 @@ class KnowledgeBase(object):
 		@param name: name of the table that is supposed to be dropped.
 		@type name: str or unicode
 		"""
-		con = lite.connect('./database/knowledgebase.db')
+		con = lite.connect('./Input/database/knowledgebase.db')
 		cur = con.cursor()
 		cur.execute("DROP TABLE IF EXISTS "+name )
 	###############################################################################
@@ -181,7 +181,7 @@ class KnowledgeBase(object):
 		"""
 		Returns the dna-sequence and the coordinate of the gene specified by 'name'.
 
-		Admissable names are the ones of SwissProt, GenBank, BioCyc. Can be found in ./database/genenames.ods
+		Admissable names are the ones of SwissProt, GenBank, BioCyc. Can be found in ./Input/database/genenames.ods
 
 		@param name: Name of the gene in SwissProt or GenBank or BioCyc
 		@type name: str
@@ -222,7 +222,7 @@ class KnowledgeBase(object):
 	def get_concentration(self,name):
 		"""
 		Returns the concentration of <name> in the cell.
-		Admissable names can be found in ./database/medianames.ods
+		Admissable names can be found in ./Input/database/medianames.ods
 
 		@param name: name of the medium
 		@type name: str
@@ -268,4 +268,4 @@ if __name__=='__main__':
 	print 'hello world'	
 	#import KnowledgeBase
 	kb=KnowledgeBase()
-	print kb.get_sequence('MG_001')
+	print kb.get_concentration('GLC')

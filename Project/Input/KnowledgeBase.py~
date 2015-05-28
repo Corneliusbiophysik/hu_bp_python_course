@@ -102,7 +102,7 @@ class KnowledgeBase(object):
 		helplist1 = ['genes', 'protein_hl','metabolites','conc', 'genome','stopcodon']
 		if namestring not in helplist1:
 			raise ValueError('Wanted Table not in database')
-		con = lite.connect('./database/knowledgebase.db')
+		con = lite.connect('.Input/database/knowledgebase.db')
 		with con:
 			j=namestring
 			cur = con.cursor()    
@@ -143,7 +143,7 @@ class KnowledgeBase(object):
 		@param dframe: dataframe with the data
 		@type dframe: dataframe
 		"""
-		con = lite.connect('./database/knowledgebase.db')
+		con = lite.connect('./Input/database/knowledgebase.db')
 		con.text_factory = str
 		cur = con.cursor()
 		cur.execute("DROP TABLE IF EXISTS "+name )
@@ -268,4 +268,4 @@ if __name__=='__main__':
 	print 'hello world'	
 	#import KnowledgeBase
 	kb=KnowledgeBase()
-	print kb.get_sequence('MG_001')
+	print kb.get_concentration('GLC')
