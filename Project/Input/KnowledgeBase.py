@@ -181,7 +181,7 @@ class KnowledgeBase(object):
 		"""
 		Returns the dna-sequence and the coordinate of the gene specified by 'name'.
 
-		Admissable names are the ones of SwissProt, GenBank, BioCyc. Can be found in ./database/genenames.ods
+		Admissable names are the ones of SwissProt, GenBank, BioCyc. Can be found in ./Input/database/genenames.ods
 
 		@param name: Name of the gene in SwissProt or GenBank or BioCyc
 		@type name: str
@@ -222,7 +222,7 @@ class KnowledgeBase(object):
 	def get_concentration(self,name):
 		"""
 		Returns the concentration of <name> in the cell.
-		Admissable names can be found in ./database/medianames.ods
+		Admissable names can be found in ./Input/database/medianames.ods
 
 		@param name: name of the medium
 		@type name: str
@@ -268,4 +268,4 @@ if __name__=='__main__':
 	print 'hello world'	
 	#import KnowledgeBase
 	kb=KnowledgeBase()
-	print kb.get_sequence('MG_001')
+	print kb.get_concentration('GLC')
