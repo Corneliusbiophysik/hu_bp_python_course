@@ -1,7 +1,6 @@
 import processes as proc
 import molecules as mol
-import numpy as np
-from Input.KnowledgeBase import KnowledgeBase as know
+import logger as loggy
 
 class Model(object):
     """
@@ -20,7 +19,7 @@ class Model(object):
         self.proteasomes = {'Proteasomes': mol.Proteasome('Proteasomes', 'Proteasomes', 10)}
         self.states.update(self.ribosomes)
         self.states.update(self.mrnas)
-        self.states.update(self.proteasomes)
+        #self.states.update({'MRNA_50': mol.MRNA(50, 'MRNA_50', "UUUGGCCUUUUUAA")})
 
         # initiate processes
         translation = proc.Translation(1, "Translation")
@@ -28,6 +27,7 @@ class Model(object):
         self.degradation = proc.Degradation(2, "Degradation")
         self.processes = {"Translation":translation}
 
+        self.logger=loggy.Logger()  # create the logger object
 
     def step(self):
         """
@@ -54,19 +54,19 @@ class Model(object):
         Simulate the model for some time.
 
         """
-        
-        
+
         for s in xrange(steps):
             self.step()
             if log: # This could be an entry point for further logging
                 # print count of each protein to the screen
                 #print '\r{}'.format([len(self.states[x]) for x in self.states.keys() if "Protein_" in x]),
-                pass
-                
+                self.logger.add_step(self.states.items()) # store the states of a timestep to the Logger object 
 
-            
+    def output(self): # wrapper: create the output data type after a simulation was done.  
+        return self.logger.output() 
+
 if __name__ == "__main__":
     c = Model()
     c.simulate(100, log=True)
-
+    print c.output() # print the output data type of the Logger. Can be used for Plotting!!!
 
