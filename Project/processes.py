@@ -58,14 +58,16 @@ class Translation(Process):
         # declare attributes
         self.__ribosomes = []
         self.__atp = []
+        self.__aa = []
 
     def update(self, model):
         """
         Update all mrnas and translate proteins and current metabolites.
         """
         self.__ribosomes = model.states[self.enzyme_ids[0]]
-        self.__atp = model.states["ATP"]
+        self.__atp = model.states['ATP']
         self.__mrna = [x for x in self.substrate_ids if "MRNA" in x]
+        self.__aa = model.states['AA']
         for mrna_id in self.__mrna:
             prot = None
             mrna = model.states[mrna_id]
@@ -93,7 +95,7 @@ class Translation(Process):
                 # position as if it were bound to the ribosome
                 # ATP has to be available
                
-                self.__atp.metacount()
+                self.__atp.metacount(1)
                 
                 mrna.binding[0] =  molecules.Protein("Protein_{0}".format(mrna.id),
                                                      "Protein_{0}".format(mrna.id),
@@ -113,13 +115,14 @@ class Translation(Process):
 
         # TODO: this needs to update in a random order
         for i, ribosome in enumerate(mrna.binding):
-            if self.__atp.count <= 0: #if there is no more ATP, elongation can't proceed
+            if self.__atp.count <= 0 or self.__aa.count <= 0: #if there is no more ATP, elongation can't proceed
                 break
             if isinstance(ribosome, molecules.Protein):
 
                 codon = mrna[i*3:i*3+3]
                 aa = self.code[codon]
-                self.__atp.metacount()
+                self.__atp.metacount(1)
+                self.__aa.metacount(1)
 
                 if aa == "*":  # terminate at stop codon
                     return self.terminate(mrna, i)
@@ -142,7 +145,7 @@ class Translation(Process):
         protein = mrna.binding[i]  # bound mRNA
         mrna.binding[i] = 0
         self.__ribosomes.count += 1
-        self.__atp.metacount()
+        self.__atp.metacount(1)
        
         return protein
 

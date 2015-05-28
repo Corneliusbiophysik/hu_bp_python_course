@@ -96,8 +96,8 @@ class Metabolite(BioMoleculeCount):
     def __init__(self, mid, name, count):
         super(Metabolite, self).__init__(mid, name, count)
     
-    def metacount(self):
-        self.count -= 1
+    def metacount(self, magnitude):
+        self.count -= magnitude
 
 
 class MRNA(Polymer):

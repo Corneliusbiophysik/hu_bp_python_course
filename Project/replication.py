@@ -81,11 +81,13 @@ class Helicase(BioMoleculeCount):
 
 class Replication(Process):
 
-    def __init__(self, id, name, ATP, NT, double=False):
+    def __init__(self, id, name, double=False):
         super(Replication, self).__init__(id, name)
         self._double = double
-        self.ATP_molecules = ATP
-        self.Nucleotide = NT
+        #self.__atp = ATP 
+        self.__atp = [] #Liste fuer atp aus Metabolit class
+        #self.Nucleotide = NT
+        self.__nucleotide = []
 
     @property
     def double(self):
@@ -104,6 +106,8 @@ class Replication(Process):
         self.Helicase_anticlock = model.states['Helicase_0']
         self.Helicase_clock = model.states['Helicase_1']
         self.DNA = model.states['DNA']
+        self.__atp = model.states['ATP']#update der Liste aus model
+        self.__nucleotide = model.states['NT']
 
         if self.double ==False: # Replikation darf nur stattfinden, wenn DNA noch nicht veerdoppelt ist
         #in anticlock_Richtung
@@ -139,21 +143,21 @@ class Replication(Process):
             x_number =nr.randint(1,10)#Bindungswahrscheinlichkeit Helikase
             if x_number ==1:
                 Helicase.bound =True
-        elif self.ATP_molecules >= 100 and (Helicase.position - PolymeraseIII.position) < 3000:
+        elif self.__atp.count >= 100 and (Helicase.position - PolymeraseIII.position) < 3000:
             Helicase.position += 100
-            self.ATP_molecules -= 100
-        elif self.ATP_molecules > 0 and (Helicase.position - PolymeraseIII.position) < 3000:
-            Helicase.position += self.ATP_molecules
-            self.ATP_molecules -= self.ATP_molecules
+            self.__atp.metacount(100)
+        elif self.__atp.count > 0 and (Helicase.position - PolymeraseIII.position) < 3000:
+            Helicase.position += self.__atp.count
+            self.__atp.count -= self.__atp.count
         if Helicase.position >=1500: # 1500 ist Mindestabstand zwischen Helicase und PolyIII
             y_number =nr.randint(1,5)# Bindungswahrscheinlichkeit Polymerase
             if y_number ==1:
                 PolymeraseIII.bound = True
 
         if Helicase.position > self.DNA.length:
-            self.ATP_molecules=self.ATP_molecules+(Helicase.position -self.DNA.length)
+            self.__atp.count=self.__atp.count+(Helicase.position -self.DNA.length)
             Helicase.position = self.DNA.length
-        #print ('ATP:',self.ATP_molecules,'NT:',self.Nucleotide)
+        #print ('ATP:',self.__atp,'NT:',self.Nucleotide)
         return Helicase, PolymeraseIII
 
     def elongate(self,DNA, Pol, Hel):
@@ -164,37 +168,37 @@ class Replication(Process):
         """
         Helicase = Hel
         PolymeraseIII = Pol
-        if self.ATP_molecules >= 100 and (Helicase.position - PolymeraseIII.position) < 3000: #genug ATP, Abstand klein genug
+        if self.__atp.count >= 100 and (Helicase.position - PolymeraseIII.position) < 3000: #genug ATP, Abstand klein genug
             Helicase.position += 100 
-            self.ATP_molecules -= 100
-            if self.Nucleotide >= 200 and (Helicase.position - PolymeraseIII.position) > 1500: #genug  Nucleotide (>=200)
+            self.__atp.metacount(100) #metacount verringert hier die ATP-Anzahl um 100
+            if self.__nucleotide.count >= 200 and (Helicase.position - PolymeraseIII.position) > 1500: #genug  Nucleotide (>=200)
                 PolymeraseIII.position += 100
-                self.Nucleotide -= 200
-            elif self.Nucleotide > 1 and (Helicase.position - PolymeraseIII.position) > 1500: #nicht genug Nucleotide (1-199)
-                PolymeraseIII.position += self.Nucleotide/2
-                Helicase.position = Helicase.position -100 +self.Nucleotide/2
-                self.ATP_molecules =self.ATP_molecules+100-self.Nucleotide/2
-                self.Nucleotide -= 2*(self.Nucleotide/2)
+                self.__nucleotide.metacount(200) #metacount verringert hier die NT-Anzahl um 200
+            elif self.__nucleotide.count > 1 and (Helicase.position - PolymeraseIII.position) > 1500: #nicht genug Nucleotide (1-199)
+                PolymeraseIII.position += self.__nucleotide.count/2
+                Helicase.position = Helicase.position -100 +self.__nucleotide.count/2
+                self.__atp.count =self.__atp.count+100-self.__nucleotide.count/2
+                self.__nucleotide.metacount(2*(self.__nucleotide.count/2))
         
-        elif self.ATP_molecules >= 0 and (Helicase.position - PolymeraseIII.position) < 3000: #nicht genug ATP, Abstand klein genug
-            Helicase.position += self.ATP_molecules
-            if self.Nucleotide >= 200 and (Helicase.position - PolymeraseIII.position) > 1500:  #genug Nucleotide
+        elif self.__atp.count >= 0 and (Helicase.position - PolymeraseIII.position) < 3000: #nicht genug ATP, Abstand klein genug
+            Helicase.position += self.__atp.count
+            if self.__nucleotide.count >= 200 and (Helicase.position - PolymeraseIII.position) > 1500:  #genug Nucleotide
                 PolymeraseIII.position += 100
-                self.Nucleotide -= 200
-            elif self.Nucleotide > 1 and (Helicase.position - PolymeraseIII.position) > 1500: #nicht genug Nucleotide
-                PolymeraseIII.position += self.Nucleotide/2
-                Helicase.position = Helicase.position -self.ATP_molecules +self.Nucleotide/2
-                self.ATP_molecules -=self.Nucleotide/2
-                self.Nucleotide -= 2*(self.Nucleotide/2)
-            self.ATP_molecules -= self.ATP_molecules
+                self.__nucleotide.metacount(200)
+            elif self.__nucleotide.count > 1 and (Helicase.position - PolymeraseIII.position) > 1500: #nicht genug Nucleotide
+                PolymeraseIII.position += self.__nucleotide.count/2
+                Helicase.position = Helicase.position -self.__atp.count +self.__nucleotide.count/2
+                self.__atp.metacount(self.__nucleotide.count/2)
+                self.__nucleotide.metacount(2*(self.__nucleotide.count/2))
+            self.__atp.count -= self.__atp.count
 
         if Helicase.position > self.DNA.length:
-            self.ATP_molecules=self.ATP_molecules+(Helicase.position -self.DNA.length)
+            self.__atp.count=self.__atp.count+(Helicase.position -self.DNA.length)
             Helicase.position = self.DNA.length
 
         if Helicase.position >= self.DNA.length:
             Helicase.bound =False
-        #print ('ATP:',self.ATP_molecules,'NT:',self.Nucleotide)
+        #print ('ATP:',self.__atp,'NT:',self.Nucleotide)
         return Helicase, PolymeraseIII
 
 
@@ -210,15 +214,15 @@ class Replication(Process):
         #print self.DNA.length, PolymeraseIII.position
     	#wenn pos= length helicase + polyIII fallen ab
         if PolymeraseIII.bound == True:
-            if self.Nucleotide >= 200 :
+            if self.__nucleotide.count >= 200 :
                 PolymeraseIII.position += 100
-                self.Nucleotide -= 200
-            elif self.Nucleotide>1 :
-                PolymeraseIII.position += self.Nucleotide/2
-                self.Nucleotide -= 2*self.Nucleotide/2
+                self.__nucleotide.metacount(200)
+            elif self.__nucleotide.count>1 :
+                PolymeraseIII.position += self.__nucleotide.count/2
+                self.__nucleotide.metacount(2*self.__nucleotide.count/2)
 
         if PolymeraseIII.position >= self.DNA.length:
-            self.Nucleotide += (PolymeraseIII.position-self.DNA.length)*2
+            self.__nucleotide.count += (PolymeraseIII.position-self.DNA.length)*2
             PolymeraseIII.position=self.DNA.length
             PolymeraseIII.bound = False
 
