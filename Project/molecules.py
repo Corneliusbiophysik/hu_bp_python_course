@@ -1,3 +1,5 @@
+import Input.KnowledgeBase as know
+
 __author__ = 'max'
 
 
@@ -119,7 +121,7 @@ class Protein(Polymer):
     def __init__(self, mid, name, sequence, mass=0, halflife=1):
         super(Protein, self).__init__(mid, name, sequence, mass)
         self.number_of_proteins += 1
-        #halflife = get_protein_hl(protein_ids)
+        #halflife = know.get_protein_hl(protein_ids)
         self.halflife = halflife
 
     def __add__(self, AS):

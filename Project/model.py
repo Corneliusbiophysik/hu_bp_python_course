@@ -1,6 +1,7 @@
 import processes as proc
 import molecules as mol
 import numpy as np
+from Input.KnowledgeBase import KnowledgeBase as know
 
 class Model(object):
     """
@@ -9,6 +10,9 @@ class Model(object):
     def __init__(self):
         self.states = {}
         self.processes = {}
+        kb = know()
+        self.genes = kb.getfromdb('genes')
+        print self.genes
 
         # initiate states
         self.ribosomes = {'Ribosomes': mol.Ribosome('Ribosomes', 'Ribosomes', 10)}
@@ -41,9 +45,6 @@ class Model(object):
                     g += len(self.states[x])
             self.degradation.set_states(protein, self.proteasomes.keys() )
             self.degradation.update(self)
-            #print 'protein', protein
-            #print 'g',g
-            #print 'self.states', self.states.keys()
             g = 0
 
 

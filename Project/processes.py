@@ -1,6 +1,7 @@
 import random
 import molecules
 import numpy.random as npr
+import Input.KnowledgeBase as know
 
 
 class Process(object):
@@ -164,26 +165,6 @@ class Degradation(Process):
         self.__proteasomes.count = 10
         count_s += 1
         print 'count_s', count_s
-        #self.__proteasom = model.states[self.enzyme_ids[0]]
-        #if "Protein_1" in model.states:
-            #print "self.states[Protein_1]: ", model.states["Protein_1"]
-        #print self.protein_ids
-        #for protein_id in self.protein_ids:
-            #print "len befor: ", len(model.states[protein_id])
-            #if len(model.states[protein_id]) != 0:
-                #print "len after: ", len(model.states[protein_id])
-                #model.states[protein_id][0].name
-                #print self.protein_ids
-                #if count_s%model.states[protein_id][0].halflife == 0:
-                    #y = random.randint(0,1)
-                    #if y == 1:
-                        #print 'Protein killed'
-                        #print "model.states[protein_id]" , model.states[protein_id]
-                        #del model.states[protein_id][0]
-                    #else:
-                        #print 'Nothing happens'
-        #if count_s%model.states[protein_id][0].halflife != 0:
-         #   print 'Halflife not reached'
 
         for p in self.protein_ids:
             if len(model.states[p]) != 0:
@@ -215,7 +196,3 @@ class Degradation(Process):
                         else:
                             print 'Nothing happens without Proteasome'
 
-
-        #print 'count', count_s
-        #count_s = 0
-        #print 'Proteasomes:', self.__proteasomes
