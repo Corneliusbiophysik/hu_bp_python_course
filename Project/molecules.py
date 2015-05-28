@@ -14,6 +14,7 @@ class BioMolecule(object):
         self.__mid = mid
         self.name = name
         self.mass = mass
+       
 
     @property
     def id(self):
@@ -86,13 +87,34 @@ class BioMoleculeCount(BioMolecule):
     def count(self, value):
         self.__count = value
 
-class  Metabolite(BioMoleculeCount):
-    def __init__(self, mid, name, count=0):
-        super(ATP, self).__init__(mid, name, count)
-        self.atp = a
-        self.aa= b
-        self.nt = c
+class Metabolite(BioMoleculeCount):
+    def __init__(self, mid, name, count):  # my_dict
+        super(Metabolite, self).__init__(mid, name, count)
+        #self.my_dict = my_dict
+        #self.atp = my_dict["ATP"]
+        #self.atp = my_dict[0]
+
+    #def __getitem__(self, value):
+    #    return self.atp[value]
+
+    #def __setitem__(self, key, value):
+    #    self.atp[key]=value
+    
+    def atpcount(self):
+        self.count -= 1
+        #return self._atp
         
+        #property
+        #get
+
+        #print "count: ", count
+
+   # def metabol(self):
+        
+   #     self.count=self.my_dict['ATP']
+   #     print(self.count)
+
+
 
 
 class MRNA(Polymer):
