@@ -65,7 +65,6 @@ class Translation(Process):
         """
         self.__ribosomes = model.states[self.enzyme_ids[0]]
         self.__atp = model.states["ATP"]
-        print('\n This is self.atp by update:{}'.format(self.__atp.count))#delete#
         self.__mrna = [x for x in self.substrate_ids if "MRNA" in x]
         for mrna_id in self.__mrna:
             prot = None
@@ -96,7 +95,6 @@ class Translation(Process):
                
                 self.__atp.metacount()
                 
-                print('\n new protein: {}'.format(self.__atp.count))
                 mrna.binding[0] =  molecules.Protein("Protein_{0}".format(mrna.id),
                                                      "Protein_{0}".format(mrna.id),
                                                      self.code[mrna[0:3]])
@@ -122,7 +120,6 @@ class Translation(Process):
                 codon = mrna[i*3:i*3+3]
                 aa = self.code[codon]
                 self.__atp.metacount()
-                print('\n This is self.atp by elongate:{}'.format(self.__atp.count))#delete
 
                 if aa == "*":  # terminate at stop codon
                     return self.terminate(mrna, i)
@@ -145,7 +142,6 @@ class Translation(Process):
         protein = mrna.binding[i]  # bound mRNA
         mrna.binding[i] = 0
         self.__ribosomes.count += 1
-        print('STOP')#delete
         self.__atp.metacount()
        
         return protein
