@@ -204,7 +204,17 @@ class Degradation(Process):
                         else:
                             print 'Nothing happens'
                     else:
-                        print 'No Proteasome'
+                        #print 'No Proteasome'
+                        z = random.uniform(0,1)
+                        sig = float(1.0/(4.0*hwz))
+                        print z
+                        print sig
+                        if z < sig:
+                            print 'Protein killed without Proteasome'
+                            del model.states[p][0]
+                        else:
+                            print 'Nothing happens without Proteasome'
+
 
         #print 'count', count_s
         #count_s = 0
