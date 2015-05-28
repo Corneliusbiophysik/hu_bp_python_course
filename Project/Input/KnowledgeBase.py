@@ -23,11 +23,11 @@ class KnowledgeBase(object):
 		"""
 		####Input aus Excel-Tabellen
 		#Einlesen der Gen-, Metabolit- und Mediumsspezifikation
-		genes = pd.read_csv('./csvfastadata/genes.csv',header=4, index_col=None)
-		metabolites =pd.read_csv('./csvfastadata/metabolite.csv',header=4, index_col=0, na_values=['NaN'], keep_default_na=False)
-		media = pd.read_csv('./csvfastadata/media.csv',header=3,index_col=0, na_values=['NaN'],keep_default_na=False)
-		protein_hl = pd.read_csv('./csvfastadata/mRNA.csv',header=4, index_col=0, na_values=[' '],keep_default_na=False)
-		stopcodon = pd.read_csv('./csvfastadata/stopcodon.csv',header=2, index_col=None)
+		genes = pd.read_csv('./Input/csvfastadata/genes.csv',header=4, index_col=None)
+		metabolites =pd.read_csv('./Input/csvfastadata/metabolite.csv',header=4, index_col=0, na_values=['NaN'], keep_default_na=False)
+		media = pd.read_csv('./Input/csvfastadata/media.csv',header=3,index_col=0, na_values=['NaN'],keep_default_na=False)
+		protein_hl = pd.read_csv('./Input/csvfastadata/mRNA.csv',header=4, index_col=0, na_values=[' '],keep_default_na=False)
+		stopcodon = pd.read_csv('./Input/csvfastadata/stopcodon.csv',header=2, index_col=None)
 
 		#Editieren der Dataframes
 		#Herauswerfen aller unwichtigen Spalten
@@ -42,7 +42,7 @@ class KnowledgeBase(object):
 		conc = conc[pd.notnull(conc['Concentration mM'])]
 
 		##Laden des vollstaendigen Genoms in einen Objekt
-		with open('./csvfastadata/sequence.fasta','r') as f:
+		with open('./Input/csvfastadata/sequence.fasta','r') as f:
 			genome = f.readlines()
 		f.close()
 		#Herauswerfen der ersten Zeile und zusammenhaengen der Sequenzen in einen String
@@ -57,7 +57,7 @@ class KnowledgeBase(object):
 				f.write(data)
 
 		#Schreiben in die Datenbank
-		con = lite.connect('./database/knowledgebase.db')
+		con = lite.connect('./Input/database/knowledgebase.db')
 		con.text_factory = str
 
 
@@ -73,7 +73,7 @@ class KnowledgeBase(object):
 				cur.execute("DROP TABLE IF EXISTS "+j )
 				wert=helper[j].to_sql(j,con)
 				data = '\n'.join(con.iterdump())
-				writeData(data, "./database/export/"+j)
+				writeData(data, "./Input/database/export/"+j)
 
 		with con:
 			cur = con.cursor()
@@ -81,7 +81,7 @@ class KnowledgeBase(object):
 			cur.execute("CREATE TABLE genome(Sequence TEXT)")
 			cur.execute("INSERT INTO genome VALUES('"+genome+"')")
 			data = '\n'.join(con.iterdump())
-			writeData(data, "./database/export/genome")
+			writeData(data, "./Input/database/export/genome")
 		return None
 
 
@@ -102,7 +102,7 @@ class KnowledgeBase(object):
 		helplist1 = ['genes', 'protein_hl','metabolites','conc', 'genome','stopcodon']
 		if namestring not in helplist1:
 			raise ValueError('Wanted Table not in database')
-		con = lite.connect('./database/knowledgebase.db')
+		con = lite.connect('./Input/database/knowledgebase.db')
 		with con:
 			j=namestring
 			cur = con.cursor()    
@@ -143,13 +143,13 @@ class KnowledgeBase(object):
 		@param dframe: dataframe with the data
 		@type dframe: dataframe
 		"""
-		con = lite.connect('./database/knowledgebase.db')
+		con = lite.connect('./Input/database/knowledgebase.db')
 		con.text_factory = str
 		cur = con.cursor()
 		cur.execute("DROP TABLE IF EXISTS "+name )
 		dframe.to_sql(name,con)
 		data = '\n'.join(con.iterdump())
-		writeData(data, "./database/export/"+name)
+		writeData(data, "./Input/database/export/"+name)
 	
 
 
@@ -160,7 +160,7 @@ class KnowledgeBase(object):
 		@param name: name of the table that is supposed to be dropped.
 		@type name: str or unicode
 		"""
-		con = lite.connect('./database/knowledgebase.db')
+		con = lite.connect('./Input/database/knowledgebase.db')
 		cur = con.cursor()
 		cur.execute("DROP TABLE IF EXISTS "+name )
 	###############################################################################

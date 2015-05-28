@@ -11,12 +11,12 @@ class Model(object):
         self.states = {}
         self.processes = {}
         kb = know()
-        self.genes = kb.getfromdb('genes')
-        print self.genes
+        genes = ['MG_001', 'MG_002', 'MG_003', 'MG_004', 'MG_005']
+        print genes
 
         # initiate states
         self.ribosomes = {'Ribosomes': mol.Ribosome('Ribosomes', 'Ribosomes', 10)}
-        self.mrnas = {'MRNA_{0}'.format(i): mol.MRNA(i, 'MRNA_{0}'.format(i), "UUUUUUUUUUAA") for i in xrange(50)}
+        self.mrnas = {'MRNA_{0}'.format(i): mol.MRNA(i, 'MRNA_{0}'.format(i), "UUUUUUUUUUAA") for i in genes}
         self.proteasomes = {'Proteasomes': mol.Proteasome('Proteasomes', 'Proteasomes', 10)}
         self.states.update(self.ribosomes)
         self.states.update(self.mrnas)

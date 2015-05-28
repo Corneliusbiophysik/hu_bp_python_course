@@ -1,7 +1,7 @@
 import random
 import molecules
 import numpy.random as npr
-import Input.KnowledgeBase as know
+from Input.KnowledgeBase import KnowledgeBase as know
 
 
 class Process(object):
@@ -55,7 +55,7 @@ class Translation(Process):
 
     def __init__(self, id, name):
         super(Translation, self).__init__(id, name)
-
+        self.kb = know()
         # declare attributes
         self.__ribosomes = []
 
@@ -90,9 +90,13 @@ class Translation(Process):
             if npr.poisson(self.__ribosomes.count) > 1: # at least one binding event happens in time step
                 # if a ribosome binds the position a new Protein is created and stored on the
                 # position as if it were bound to the ribosome
+                halflife = self.kb.get_protein_hl(mrna.id)
+                halflife = halflife.replace(',', '.')
+                halflife = float(halflife)
                 mrna.binding[0] =  molecules.Protein("Protein_{0}".format(mrna.id),
                                                      "Protein_{0}".format(mrna.id),
-                                                     self.code[mrna[0:3]])
+                                                     self.code[mrna[0:3]],
+                                                     halflife = halflife)
                 self.__ribosomes.count -= 1
 
     def elongate(self, mrna):
@@ -160,12 +164,17 @@ class Degradation(Process):
 
     
     def update(self, model):
+
+        #Regenerates amount of Proteasomes for every step
         global count_s
         self.__proteasomes = model.states[self.enzyme_ids[0]]
         self.__proteasomes.count = 10
         count_s += 1
         print 'count_s', count_s
 
+        #Checks if there are any proteins available, computes a value sigma (depending on halflife) which is compared
+        # to random number between 0 and 1. If random number is < than sigma, protein is degradated and one proteasom is busy.
+        # If no proteasom is left, sigma is half as big as befor (protein is more unlikely to be degradated)
         for p in self.protein_ids:
             if len(model.states[p]) != 0:
                 hwz = model.states[p][0].halflife
@@ -177,15 +186,12 @@ class Degradation(Process):
                         print sig
                         if z < sig:
                             print 'Protein killed'
-                            #count_s = 0
                             self.__proteasomes.count -= 1
                             print 'Anzahl:', self.__proteasomes.count
                             del model.states[p][0]
-                            #count_s += 1
                         else:
                             print 'Nothing happens'
                     else:
-                        #print 'No Proteasome'
                         z = random.uniform(0,1)
                         sig = float(1.0/(4.0*hwz))
                         print z
