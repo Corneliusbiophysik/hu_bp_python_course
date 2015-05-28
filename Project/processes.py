@@ -97,7 +97,9 @@ class Translation(Process):
                 # if a ribosome binds the position a new Protein is created and stored on the
                 # position as if it were bound to the ribosome
                 # ATP has to be available
-               
+                halflife = self.kb.get_protein_hl(mrna.id)
+                halflife = halflife.replace(',', '.')
+                halflife = float(halflife)
                 self.__atp.metacount(1)
                 
                 mrna.binding[0] =  molecules.Protein("Protein_{0}".format(mrna.id),

@@ -2,8 +2,9 @@ import processes as proc
 import molecules as mol
 import logger as loggy
 
-import replication as repl
+import replication as rep
 import random
+import Input.KnowledgeBase as know
 
 class Model(object):
     """
@@ -13,7 +14,11 @@ class Model(object):
         self.states = {}
         self.processes = {}
 
-        kb = know()
+
+        DNA_length=10000
+        ATP_mol=600000
+        NT_mol=1400000
+        kb = know.KnowledgeBase()
         genes = ['MG_001', 'MG_002', 'MG_003', 'MG_004', 'MG_005']
 
 
@@ -22,26 +27,36 @@ class Model(object):
         self.mrnas = {'MRNA_{0}'.format(i): mol.MRNA(i, 'MRNA_{0}'.format(i), "UUUUUUUUUUAA") for i in genes}
         self.proteasomes = {'Proteasomes': mol.Proteasome('Proteasomes', 'Proteasomes', 10)}
         self.metabolites = {'ATP': mol.Metabolite(0, 'ATP', 6000.0), 'AA': mol.Metabolite(1, 'AA', 4000.0), 'NT': mol.Metabolite(2, 'NT', 2000.0)}#anpassen an
+        self.Helicase = {'Helicase_{0}'.format(i): rep.Helicase(i, 'Helicase_{0}'.format(i)) for i in xrange(0,2)}
+        self.PolymeraseIII = {'PolymeraseIII_{0}'.format(i):rep.PolymeraseIII(i,'PolymeraseIII_{0}'.format(i)) for i in xrange(0,4)}
+        self.DNA = {'DNA':rep.DNA('DNA','DNA', DNA_length, 2*DNA_length)}
+        self.states.update(self.Helicase)
+        self.states.update(self.PolymeraseIII)
+        self.states.update(self.DNA)
         self.states.update(self.ribosomes)
         self.states.update(self.mrnas)
         self.states.update(self.metabolites)
+        self.states.update(self.proteasomes)
+
         
 
         # initiate processes
         translation = proc.Translation(1, "Translation")
         translation.set_states(self.mrnas.keys(), self.ribosomes.keys())
+
         degradation = proc.Degradation(2, "Degradation")
-        replication = repl.Replication(2, "Replication")
+        degradation.set_states([], self.proteasomes.keys() )
+
+        replication = rep.Replication(1, "Replication", ATP_mol, NT_mol)
+        replication.set_states(self.DNA.keys(), self.PolymeraseIII.keys() + self.Helicase.keys())
         replication.set_states(self.mrnas.keys() + self.metabolites.keys(), self.ribosomes.keys() )
         self.processes = {"Translation":translation,
-                       "Replication":replication,
-                       "Degradation":degradation}
+                          "Replication":replication,
+                          "Degradation":degradation}
 
         self.logger=loggy.Logger()  # create the logger object
 
     def step(self):
-
-        
         """
         Do one update step for each process.
 
@@ -56,8 +71,8 @@ class Model(object):
                 if "Protein_" in x:
                     protein.append(x)
                     g += len(self.states[x])
-            self.degradation.set_states(protein, self.proteasomes.keys() )
-            self.degradation.update(self)
+            self.processes["Degradation"].set_states(protein, self.proteasomes.keys() )
+            self.processes["Degradation"].update(self)
             g = 0
 
 
