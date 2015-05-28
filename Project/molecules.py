@@ -1,3 +1,5 @@
+import Input.KnowledgeBase as know
+
 __author__ = 'max'
 
 
@@ -116,9 +118,10 @@ class Protein(Polymer):
     """
     number_of_proteins = 0
 
-    def __init__(self, mid, name, sequence, mass=0):
+    def __init__(self, mid, name, sequence, mass=0, halflife=1):
         super(Protein, self).__init__(mid, name, sequence, mass)
         self.number_of_proteins += 1
+        self.halflife = halflife
 
     def __add__(self, AS):
         self.sequence += AS
@@ -169,3 +172,8 @@ class RNAPolymeraseII(Polymerase):
     """
     # TODO: implement RNAPolymeraseII
     pass
+
+class Proteasome(BioMoleculeCount):
+
+    def __init__(self, mid, name, count=0):
+        super(Proteasome, self).__init__(mid, name, count)

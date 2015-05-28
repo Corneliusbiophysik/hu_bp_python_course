@@ -1,6 +1,7 @@
 import random
 import molecules
 import numpy.random as npr
+from Input.KnowledgeBase import KnowledgeBase as know
 
 
 class Process(object):
@@ -54,9 +55,9 @@ class Translation(Process):
 
     def __init__(self, id, name):
         super(Translation, self).__init__(id, name)
-
+        self.kb = know()
         # declare attributes
-        self.__ribsomes = []
+        self.__ribosomes = []
 
     def update(self, model):
         """
@@ -76,6 +77,8 @@ class Translation(Process):
                 else:
                     model.states[prot.id] = [prot]
 
+        print self.__ribosomes
+
     def initiate(self, mrna):
         """
         Try to bind to a given MRNA. Binding probability corresponds to the ribosome count.
@@ -87,9 +90,13 @@ class Translation(Process):
             if npr.poisson(self.__ribosomes.count) > 1: # at least one binding event happens in time step
                 # if a ribosome binds the position a new Protein is created and stored on the
                 # position as if it were bound to the ribosome
+                halflife = self.kb.get_protein_hl(mrna.id)
+                halflife = halflife.replace(',', '.')
+                halflife = float(halflife)
                 mrna.binding[0] =  molecules.Protein("Protein_{0}".format(mrna.id),
                                                      "Protein_{0}".format(mrna.id),
-                                                     self.code[mrna[0:3]])
+                                                     self.code[mrna[0:3]],
+                                                     halflife = halflife)
                 self.__ribosomes.count -= 1
 
     def elongate(self, mrna):
@@ -115,6 +122,7 @@ class Translation(Process):
                     mrna.binding[i] = 0
         return 0
 
+
     def terminate(self, mrna, i):
         """
         Splits the ribosome/MRNA complex and returns a protein.
@@ -128,6 +136,7 @@ class Translation(Process):
         return protein
 
 
+
 class Transcription(Process):
     """
     Implements mRNA transcription from genes on the chromosome.
@@ -137,3 +146,58 @@ class Transcription(Process):
         super(Transcription, self).__init__(id, name)
 
     # TODO: implement transcription
+
+class Degradation(Process):
+    """
+    Implements Protein Degradation by chance
+    """
+    count_s = 0
+    global count_s
+
+    def __init__(self, id, name):
+        super(Degradation, self).__init__(id, name)
+        self.__proteasomes = []
+
+    def set_states(self, substrate_ids, enzyme_ids):
+        self.protein_ids = substrate_ids
+        self.enzyme_ids = enzyme_ids
+
+    
+    def update(self, model):
+
+        #Regenerates amount of Proteasomes for every step
+        global count_s
+        self.__proteasomes = model.states[self.enzyme_ids[0]]
+        self.__proteasomes.count = 10
+        count_s += 1
+        print 'count_s', count_s
+
+        #Checks if there are any proteins available, computes a value sigma (depending on halflife) which is compared
+        # to random number between 0 and 1. If random number is < than sigma, protein is degradated and one proteasom is busy.
+        # If no proteasom is left, sigma is half as big as befor (protein is more unlikely to be degradated)
+        for p in self.protein_ids:
+            if len(model.states[p]) != 0:
+                hwz = model.states[p][0].halflife
+                sig = float(1.0/(2.0*hwz*60))
+                for pos in model.states[p]:
+                    if self.__proteasomes.count != 0:
+                        z = random.uniform(0,1)
+                        print z
+                        print sig
+                        if z < sig:
+                            print 'Protein killed'
+                            self.__proteasomes.count -= 1
+                            print 'Anzahl:', self.__proteasomes.count
+                            del model.states[p][0]
+                        else:
+                            print 'Nothing happens'
+                    else:
+                        z = random.uniform(0,1)
+                        sig = float(1.0/(4.0*hwz*60))
+                        print z
+                        print sig
+                        if z < sig:
+                            print 'Protein killed without Proteasome'
+                            del model.states[p][0]
+                        else:
+                            print 'Nothing happens without Proteasome'
