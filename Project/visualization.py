@@ -115,9 +115,12 @@ def mighty_plot(res_dict, plotword, keywords):
      
     if plotword == 'time_course':
         p = timecourse_by_column(res_dict, keywords) #p is DataFrame
-        #p.plot(linewidth = 1.5)
-        p.plot(linewidth = 1.5, logy=True)
-        plt.legend(loc='best',bbox_to_anchor=(1, 1), fontsize = 7, ncol = 3)
+
+        if max(p.max())/min(p.max()) < 20.:
+            p.plot(linewidth = 1.5)
+        else:
+            p.plot(linewidth = 1.5, logy=True)
+        plt.legend(loc='best',bbox_to_anchor=(1, 1), fontsize = 7, ncol = 1)
         plt.xlabel('time[s]')
         plt.ylabel('number of molecules')
         plt.title('Timecourses')
