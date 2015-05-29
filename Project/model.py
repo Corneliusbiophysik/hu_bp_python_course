@@ -1,7 +1,7 @@
 import processes as proc
 import molecules as mol
 import logger as loggy
-
+import visualization as vis
 import replication as rep
 import random
 import Input.KnowledgeBase as know
@@ -15,7 +15,7 @@ class Model(object):
         self.processes = {}
 
 
-        DNA_length=10000
+        DNA_length=580000
         ATP_mol=600000
         NT_mol=1400000
         kb = know.KnowledgeBase()
@@ -49,7 +49,7 @@ class Model(object):
 
         replication = rep.Replication(1, "Replication", ATP_mol, NT_mol)
         replication.set_states(self.DNA.keys(), self.PolymeraseIII.keys() + self.Helicase.keys())
-        replication.set_states(self.mrnas.keys() + self.metabolites.keys(), self.ribosomes.keys() )
+        #replication.set_states(self.mrnas.keys() + self.metabolites.keys(), self.ribosomes.keys() )
         self.processes = {"Translation":translation,
                           "Replication":replication,
                           "Degradation":degradation}
@@ -95,6 +95,6 @@ class Model(object):
 
 if __name__ == "__main__":
     c = Model()
-    c.simulate(100, log=True)
-    #rint c.output() # print the output data type of the Logger. Can be used for Plotting!!!
-
+    c.simulate(200, log=True)
+    #c.output() # print the output data type of the Logger. Can be used for Plotting!!! 
+    vis.mighty_plot(c.output(), 'time_course', ['Protein', 'Ribosomes', 'DNA'])

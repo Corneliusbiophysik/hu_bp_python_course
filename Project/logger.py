@@ -1,4 +1,5 @@
 import molecules as mol
+import replication as rep
 import numpy as np
 import copy
 import pickle
@@ -46,6 +47,10 @@ class Logger(object):
                     return 1
             if isinstance(state,mol.Ribosome):
                 return state.count
+            if isinstance(state,rep.DNA):
+                return state.nucleotides
+            if isinstance(state,rep.PolymeraseIII):
+                return state.position
 
         def set_attributes(key_of_state,states_at_timepoint,t): # set the properties and timecourse in the second layer of dictionarie of the ouput data type
             if key_of_state in states_at_timepoint:                

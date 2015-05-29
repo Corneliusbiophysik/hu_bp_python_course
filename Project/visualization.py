@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import pickle as p
-import test_model
+
 
 """      
         ***Module Description***
@@ -33,9 +33,9 @@ import test_model
 
 """
 
-output = {}
-with open('output.p', 'rb') as f:
-    output = p.load(f)
+#output = {}
+#with open('output.p', 'rb') as f:
+#    output = p.load(f)
 
 def dict_to_dframe(res_dict):
     """ Takes result dict and return a DataFrame with timecourses for each model species."""
@@ -115,7 +115,8 @@ def mighty_plot(res_dict, plotword, keywords):
      
     if plotword == 'time_course':
         p = timecourse_by_column(res_dict, keywords) #p is DataFrame
-        p.plot(linewidth = 1.5)
+        #p.plot(linewidth = 1.5)
+        p.plot(linewidth = 1.5, logy=True)
         plt.legend(loc='best',bbox_to_anchor=(1, 1), fontsize = 7, ncol = 3)
         plt.xlabel('time[s]')
         plt.ylabel('number of molecules')
